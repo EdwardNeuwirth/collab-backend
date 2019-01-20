@@ -95,8 +95,15 @@ module.exports.getUTXOS = async (emisor) => {
  */
 
 module.exports.makeTransaction = async (
-  emisor, privateKey, receptor, amount, fee = process.env.BITCOIN_MINER_FEE || 1000) => {
+  // emisor, privateKey, receptor, amount, fee = process.env.BITCOIN_MINER_FEE || 1000) => {
+  emisor, privateKey, receptor, amount, fee = 668) => {
   try {
+
+    console.log('Emisor ', emisor);
+    console.log('privateKey ', privateKey);
+    console.log('receptor ', receptor);
+    console.log('amount ', amount);
+    console.log('fee ', fee);
     insight.getUnspentUtxosPromise = promisify(insight, insight.getUnspentUtxos);
     insight.broadcastPromise = promisify(insight, insight.broadcast);
     const utxos = await insight.getUnspentUtxosPromise(emisor);

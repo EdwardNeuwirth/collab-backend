@@ -23,6 +23,9 @@ module.exports.decrypt = (str) => {
 
 module.exports.encryptIv = value => {
   const iv = new Buffer(crypto.randomBytes(16));
+  console.log('this is the IV', iv.toString('hex'));
+  // const key = new Buffer(crypto.randomBytes(32));
+
   const cipher = crypto.createCipheriv(algorithm, key, iv);
   let crypted = cipher.update(value, inputEncoding, outputEncoding);
   crypted += cipher.final(outputEncoding);

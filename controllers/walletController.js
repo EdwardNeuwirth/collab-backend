@@ -11,9 +11,11 @@ exports.getTxFromWallet = async ( ctx ) => {
   const userId = await db.User.findOne({
     where: {username: ctx.user.username}
   });
+
   const userWallet = await db.UserWallet.findOne({
     where: {user_id: userId.id, wallet_id: ctx.params.walletid}
   });
+
   if (!userWallet) return ctx.body = {error: 'User has no rights over this wallet'};
   const tx = await db.Transaction.findAll({
     where: {wallet_id:ctx.params.walletid},
@@ -55,10 +57,14 @@ exports.getTxFromWalletInt = async ( key ) => {
       model: db.Operation,
     }]
   });
+
+
   const result =[];
   for ( let txi of tx ) {
     let msg = null;
+
     if (txi.dataValues.Operation) msg = txi.dataValues.Operation.dataValues.message;
+
     result.push({
       type: txi.dataValues.type,
       amount: txi.dataValues.amount,
@@ -67,11 +73,14 @@ exports.getTxFromWalletInt = async ( key ) => {
       date: txi.dataValues.date,
       message: msg
     });
+    console.log('result pushed ', result, result.length);
   }
+
+
   //remove inbound same idtrans(str)
   for (let i = 0; i<result.length; i++){
     if (result[i].type === 'outbound'){
-      if (result[i-1].transaction_str === result[i].transaction_str) {
+      if (i !== 0 && result[i-1].transaction_str === result[i].transaction_str) {
         result.splice(i-1, 1);
       }
     }
@@ -121,6 +130,8 @@ exports.getWallets = async (ctx) => {
       }
     }]
   });
+
+
   if(!wallets) return ctx.body = {wallets:[]};
   const result = wallets.map(
     (el)=>{
@@ -130,20 +141,25 @@ exports.getWallets = async (ctx) => {
         'createdAt': el.createdAt
       };
     });
+
   for( let auxWallet of  result ) {
     //this.registerTxInbound(ctx, auxWallet.publickey);
-    rabbit.queueSend(ctx, auxWallet.publickey);
+    await rabbit.queueSend(ctx, auxWallet.publickey)
+      .then((res) => console.log('Rabbit queueSend execcuted ', res));
+
     auxWallet.balance = await wallet.getWalletBalance( auxWallet.publickey );
     auxWallet.users = await userWallet.usersOfWallet( auxWallet.publickey );
     auxWallet.transactions = await this.getTxFromWalletInt( auxWallet.publickey );
     auxWallet.operations = await operCont.getAllOperationsWallet( auxWallet.publickey );
   }
   ctx.jwt.modified = true;
+
   ctx.body = {wallets:result};
 };
 
 
 exports.createWallet = async (ctx) => {
+  console.log("This is CreateWallet: ", ctx.request.body);
   const users = [];
   const usersKO =[];
   if (!ctx.request.body.alias) return ctx.body = {ERROR: 'Missing alias'};
@@ -152,6 +168,7 @@ exports.createWallet = async (ctx) => {
     { where: {username:ctx.user.username},
       attributes: ['id']
     });
+  console.log('This is User Id', userId);
 
   const w = await db.Wallet.create({
     publickey: newWallet.address,
