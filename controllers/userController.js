@@ -28,7 +28,9 @@ module.exports.signIn = async (ctx) => {
 exports.createUser = async (ctx, next) => {
   const salt = 10;
   if ('POST' != ctx.method) return await next();
+
   const userData = ctx.request.body;
+  console.log("userdata!!!", userData);
   let user = await db.User.findOne({where :{username:userData.username}});
   if (user) {
     ctx.status = 400;

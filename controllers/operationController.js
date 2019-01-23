@@ -8,6 +8,7 @@ const db = require( __dirname + '/../models/' );
 const cryptoSer = require( __dirname + '/../services/cryptoSer');
 
 module.exports.getPendingOperationsSpecificWallet = async (ctx) => {
+  console.log('Pending Operations ', ctx.params.wallet_id);
   const operations = await db.Operation.findAll({
     where: {result: 'pending'},
     include: [
@@ -27,9 +28,11 @@ module.exports.getPendingOperationsSpecificWallet = async (ctx) => {
       }
     ]
   });
+  console.log('All Operations', operations);
   let result =[];
   for (let operation of operations) {
-    if (operation.dataValues.Votes[0].dataValues.UserWallet.dataValues.wallet_id === ctx.params.wallet_id){
+    if (operation.dataValues.Votes[0].dataValues.UserWallet !== null && operation.dataValues.Votes[0].dataValues.UserWallet.dataValues.wallet_id === ctx.params.wallet_id){
+
       let numberOfVotes = 0;
       let votingState = 0;
       let publicKey = '';
@@ -56,6 +59,7 @@ module.exports.getPendingOperationsSpecificWallet = async (ctx) => {
       result.push(pendingOp);
     }
   }
+  console.log('Result! ', result);
   ctx.jwt.modified = true;
   ctx.body ={operations:result};
 };
