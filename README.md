@@ -141,12 +141,7 @@ Besides an email notification asking you to vote on everytime a new operation ge
 * [Bcrypt](https://www.npmjs.com/package/bcrypt) - Library to help you hash passwords
 
 
-## Contributing
-
-Any contribution is welcome, just fork the repository and do your thing. Then submit a pull request pointing to this repo.
-
-
-## Authors
+## Contributors
 
 - Doruk Akpek - [GitHub](https://github.com/dakpek) [LinkedIn](https://www.linkedin.com/in/dakpek/)
 
@@ -155,6 +150,8 @@ Any contribution is welcome, just fork the repository and do your thing. Then su
 - Xavi Guasch - [GitHub](https://github.com/xaviguasch) [LinkedIn](https://www.linkedin.com/in/xavi-guasch/)
 
 - Carlos Parera - [GitHub](https://github.com/YourParmenides) [LinkedIn](https://www.linkedin.com/in/carlos-parera-alvarez-844ba3123/)
+
+- Edward Neuwirth
 
 - Jon Portella - [GitHub](https://github.com/jportella93) [LinkedIn](https://linkedin.com/in/jonportella)
 
